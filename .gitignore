@@ -1,0 +1,6 @@
+node_modules/
+.expo/
+.qodo/
+*.log
+.DS_Store
+.env
