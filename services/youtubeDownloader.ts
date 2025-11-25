@@ -1,6 +1,6 @@
 import * as FileSystem from 'expo-file-system';
-import { Song } from '../types/storage';
-import { songStorageService } from './songStorageService';
+import { Song } from '@/types/storage';
+import { storageService } from '@/services/storageService';
 
 type DownloadProgressCallback = (progress: number) => void;
 
@@ -57,7 +57,7 @@ class YouTubeDownloader {
       coverArt: `https://img.youtube.com/vi/${this.getYouTubeVideoId(youtubeUrl)}/hqdefault.jpg`,
     };
 
-    await songStorageService.addSong(newSong);
+    await storageService.addDownloadedSong(newSong);
     return newSong;
   }
 

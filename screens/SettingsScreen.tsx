@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { theme } from '../constants/theme'; // Import theme
+import { theme } from '@/constants/theme'; // Import theme
 
 const SettingsScreen = () => {
   return (

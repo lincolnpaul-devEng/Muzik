@@ -1,5 +1,5 @@
 import * as MediaLibrary from 'expo-media-library';
-import { songStorageService } from './songStorageService';
+import { storageService } from './storageService';
 import { Song } from '../types/storage';
 
 type ProgressCallback = (progress: number, total: number) => void;
@@ -44,7 +44,7 @@ class LocalMusicSync {
     let processedFiles = 0;
 
     for (const asset of allAudioFiles) {
-      const isDuplicate = await songStorageService.isDuplicate(asset.uri);
+      const isDuplicate = await storageService.isDuplicate(asset.uri);
       if (!isDuplicate) {
         // Attempt to parse artist from filename
         const filenameWithoutExt = asset.filename.split('.').slice(0, -1).join('.');
@@ -72,7 +72,7 @@ class LocalMusicSync {
           dateAdded: asset.creationTime,
           coverArt: require('../assets/default-album.png'), // Default cover art
         };
-        await songStorageService.saveSong(song);
+        await storageService.saveSong(song);
       }
       processedFiles++;
       if (progressCallback) {

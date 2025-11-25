@@ -1,27 +1,28 @@
+
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  SafeAreaView, 
-  ScrollView, 
-  FlatList 
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  FlatList,
+  TextInput,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Header } from '../components/Header';
-import { MusicCard } from '../components/MusicCard';
-import { SectionHeader } from '../components/SectionHeader';
-import { songStorageService } from '../services/songStorageService';
-import { Song } from '../types/storage';
-import { RootStackParamList } from '../types/navigation'; 
-import { useAudioPlayer } from '../contexts/AudioPlayerContext';
-import { NowPlayingBar } from '../components/NowPlayingBar';
-import { theme } from '../constants/theme'; // Import theme
+import { MusicCard } from '@/components/MusicCard';
+import { SectionHeader } from '@/components/SectionHeader';
+import { songStorageService } from '@/services/songStorageService';
+import { Song } from '@/types/storage';
+import { RootStackParamList } from '@/types/navigation';
+import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
+import { theme } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
 
 type HomeScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  'Home'
+  'Main'
 >;
 
 const HomeScreen: React.FC = () => {
@@ -31,89 +32,83 @@ const HomeScreen: React.FC = () => {
   const { play } = useAudioPlayer();
 
   useEffect(() => {
-    // Initialize with mock data for now
     loadMockData();
-    
-    // TODO: Replace with actual storage service integration
-    // initializeFromStorage();
   }, []);
 
   const loadMockData = () => {
-    // Mock data for recently played (local songs)
     const mockRecentlyPlayed: Song[] = [
       {
         id: '1',
-        title: 'Summer Vibes',
-        artist: 'DJ Sunshine',
+        title: 'Baby',
+        artist: 'Justin Bieber',
         duration: 180,
         filePath: 'file:///music/summer_vibes.mp3',
         source: 'local',
         dateAdded: Date.now(),
-        coverArt: require('../assets/default-album.png'), // Added coverArt
+        coverArt: require('../assets/thumbnail.jpg'),
       },
       {
-        id: '2', 
-        title: 'Chill LoFi Mix',
-        artist: 'Study Beats',
+        id: '2',
+        title: 'Love Me',
+        artist: 'Alex',
         duration: 240,
         filePath: 'file:///music/chill_lofi.mp3',
         source: 'local',
         dateAdded: Date.now(),
-        coverArt: require('../assets/default-album.png'), // Added coverArt
+        coverArt: require('../assets/thumbnail.jpg'),
       },
       {
         id: '3',
-        title: 'Morning Motivation',
-        artist: 'Energy Boost',
+        title: 'Party Mix',
+        artist: 'DJ Shake',
         duration: 210,
         filePath: 'file:///music/morning_motivation.mp3',
         source: 'local',
         dateAdded: Date.now(),
-        coverArt: require('../assets/default-album.png'), // Added coverArt
+        coverArt: require('../assets/thumbnail.jpg'),
       },
     ];
 
-    // Mock data for recommended music (downloaded YouTube)
     const mockRecommended: Song[] = [
       {
         id: '4',
         title: 'Latest DJ Mix 2022',
-        artist: 'Top DJs Worldwide',
+        artist: '20 Songs',
         duration: 360,
         filePath: 'file:///downloads/dj_mix_2022.mp3',
         source: 'youtube',
         dateAdded: Date.now(),
-        coverArt: require('../assets/default-album.png'), // Added coverArt
+        coverArt: require('../assets/thumbnail.jpg'),
       },
       {
         id: '5',
-        title: 'Viral TikTok Hits',
-        artist: 'Trending Now',
+        title: 'Party Mix',
+        artist: '31 Songs',
         duration: 280,
         filePath: 'file:///downloads/tiktok_hits.mp3',
         source: 'youtube',
         dateAdded: Date.now(),
-        coverArt: require('../assets/default-album.png'), // Added coverArt
+        coverArt: require('../assets/thumbnail.jpg'),
       },
       {
         id: '6',
-        title: 'Workout Motivation',
-        artist: 'Gym Beats',
+        title: 'Latest Party Mix',
+        artist: '42 Songs',
         duration: 320,
         filePath: 'file:///downloads/workout_mix.mp3',
         source: 'youtube',
         dateAdded: Date.now(),
-        coverArt: require('../assets/default-album.png'), // Added coverArt
+        coverArt: require('../assets/thumbnail.jpg'),
       },
       {
         id: '7',
-        title: 'Relaxing Piano',
-        artist: 'Calm Sounds',
+        title: 'Justing Biber',
+        artist: '30 Songs',
         duration: 300,
         filePath: 'file:///downloads/piano_relax.mp3',
         source: 'youtube',
         dateAdded: Date.now(),
-        coverArt: require('../assets/default-album.png'), // Added coverArt
+        coverArt: require('../assets/thumbnail.jpg'),
       },
     ];
 
@@ -121,98 +116,58 @@ const HomeScreen: React.FC = () => {
     setRecommendedMusic(mockRecommended);
   };
 
-  const initializeFromStorage = async () => {
-    try {
-      await songStorageService.initialize();
-      const recentlyPlayedSongs = await songStorageService.getRecentlyPlayed();
-      const downloadedSongs = await songStorageService.getDownloadedSongs();
-      
-      setRecentlyPlayed(recentlyPlayedSongs);
-      setRecommendedMusic(downloadedSongs);
-    } catch (error) {
-      console.error('Error loading from storage:', error);
-    }
-  };
-
-  const handleGetStarted = () => {
-    console.log('Get Started pressed');
-  };
-
-  const handleDownload = () => {
-    // Navigation is handled by the tab navigator now, so this will be
-    // navigation.navigate('Download') if we were still in a stack on home.
-    // However, since App.tsx is wrapped in AppNavigator, and then AppNavigator
-    // has the tab navigator, 'Download' would be a tab, so a direct navigate
-    // from this context would be 'navigation.navigate("BottomTabs", { screen: "Download" })'
-    // For simplicity, for now, we will leave the console.log.
-    // If user clicks the header download button from Home tab, it should navigate to Download tab.
-    navigation.navigate('Download'); // This will navigate to the Download tab
-  };
-
-  const handleSeeAllRecent = () => {
-    console.log('See All Recently Played');
-  };
-
-  const handleSeeAllRecommended = () => {
-    console.log('See All Recommended Music');
-  };
-
   const handleSongPress = (song: Song) => {
     play(song);
   };
 
+  const renderRecommendedItem = ({ item }: { item: Song }) => (
+    <View style={styles.recommendedItemContainer}>
+        <MusicCard
+          title={item.title}
+          subtitle={item.artist}
+          imageUrl={item.coverArt}
+          onPress={() => handleSongPress(item)}
+          size={50} />
+      <Ionicons name="heart-outline" size={24} color={theme.Colors.textSecondary} />
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        {/* Header Component */}
-        <Header onGetStarted={handleGetStarted} onDownload={handleDownload} />
-        
-        {/* RECENTLY PLAYED Section */}
-        <SectionHeader 
-          title="RECENTLY PLAYED" 
-          showActionButton={true}
-          onActionPress={handleSeeAllRecent}
-        />
-        
-        <FlatList
-          data={recentlyPlayed}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.horizontalList}
-          renderItem={({ item }) => (
-            <MusicCard
-              title={item.title}
-              subtitle={`${Math.floor(item.duration / 60)}:${(item.duration % 60).toString().padStart(2, '0')}`}
-              imageUrl={require('../assets/default-album.png')} // Placeholder image
-              onPress={() => handleSongPress(item)}
-              isDownloaded={item.source === 'local'}
-              size={140}
-            />
-          )}
-        />
-
-        {/* RECOMMENDED MUSIC Section */}
-        <SectionHeader 
-          title="RECOMMENDED MUSIC" 
-          showActionButton={true}
-          onActionPress={handleSeeAllRecommended}
-        />
-        
-        <View style={styles.gridContainer}>
-          {recommendedMusic.map((item) => (
-            <View key={item.id} style={styles.gridItem}>
-              <MusicCard
-                title={item.title}
-                subtitle={`${Math.floor(item.duration / 60)}:${(item.duration % 60).toString().padStart(2, '0')}`}
-                imageUrl={require('../assets/default-album.png')} // Placeholder image
-                onPress={() => handleSongPress(item)}
-                isDownloaded={item.source === 'youtube'}
-                size={160}
-              />
+        <ScrollView style={styles.scrollView}>
+            <View style={styles.searchContainer}>
+                <Ionicons name="search" size={20} color={theme.Colors.textSecondary} style={styles.searchIcon} />
+                <TextInput
+                    placeholder="Search Song"
+                    placeholderTextColor={theme.Colors.textSecondary}
+                    style={styles.searchInput}
+                />
             </View>
-          ))}
-        </View>
+
+            <SectionHeader title="RECENTLY PLAYED" />
+            <FlatList
+                data={recentlyPlayed}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={styles.horizontalList}
+                renderItem={({ item }) => (
+                    <MusicCard
+                    title={item.title}
+                    subtitle={item.artist}
+                    imageUrl={item.coverArt}
+                    onPress={() => handleSongPress(item)}
+                    size={140}
+                    />
+                )}
+            />
+
+            <SectionHeader title="RECOMMENDED MUSIC" />
+            <FlatList
+                data={recommendedMusic}
+                keyExtractor={(item) => item.id}
+                renderItem={renderRecommendedItem}
+            />
       </ScrollView>
     </SafeAreaView>
   );
@@ -226,20 +181,33 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.Colors.elevation,
+    borderRadius: theme.Spacing.small,
+    paddingHorizontal: theme.Spacing.medium,
+    margin: theme.Spacing.medium,
+  },
+  searchIcon: {
+    marginRight: theme.Spacing.small,
+  },
+  searchInput: {
+    flex: 1,
+    color: theme.Colors.textPrimary,
+    fontSize: theme.Typography.size.medium,
+    height: 40,
+  },
   horizontalList: {
     paddingHorizontal: theme.Spacing.medium,
     paddingBottom: theme.Spacing.medium,
   },
-  gridContainer: {
+  recommendedItemContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: theme.Spacing.medium,
-    paddingBottom: theme.Spacing.large,
-  },
-  gridItem: {
-    width: '48%', // 2-column layout
-    marginBottom: theme.Spacing.medium,
+    paddingVertical: theme.Spacing.small,
+    justifyContent: 'space-between',
   },
 });
 

@@ -1,19 +1,16 @@
+
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ImageSourcePropType } from 'react-native';
-import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
-import { useAudioPlayer } from '../contexts/AudioPlayerContext';
-import { theme } from '../constants/theme'; // Import theme
+import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
+import { theme } from '@/constants/theme';
 
 export const NowPlayingBar: React.FC = () => {
   const { 
     currentTrack, 
     isPlaying, 
-    currentPosition, 
-    duration, 
     play, 
     pause, 
-    seekTo 
   } = useAudioPlayer();
 
   const handlePlayPause = () => {
@@ -26,17 +23,6 @@ export const NowPlayingBar: React.FC = () => {
     }
   };
 
-  const handleSeek = (value: number) => {
-    seekTo(value);
-  };
-
-  const formatTime = (milliseconds: number) => {
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
   if (!currentTrack) {
     return null;
   }
@@ -45,22 +31,15 @@ export const NowPlayingBar: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* Left Section - Album Art and Song Info */}
       <View style={styles.leftSection}>
         {currentTrack.coverArt && (
-          isLocalImage ? (
+          <View style={styles.coverArtShadow}>
             <Image 
-              source={currentTrack.coverArt as ImageSourcePropType} 
+              source={isLocalImage ? currentTrack.coverArt as ImageSourcePropType : { uri: currentTrack.coverArt as string }}
               style={styles.coverArtStyle}
               resizeMode="cover"
             />
-          ) : (
-            <Image 
-              source={{ uri: currentTrack.coverArt as string }} 
-              style={styles.coverArtStyle}
-              resizeMode="cover"
-            />
-          )
+          </View>
         )}
         <View style={styles.songInfo}>
           <Text style={styles.songTitle} numberOfLines={1}>
@@ -72,39 +51,12 @@ export const NowPlayingBar: React.FC = () => {
         </View>
       </View>
 
-      {/* Center Section - Progress Bar */}
-      <View style={styles.centerSection}>
-        <View style={styles.progressContainer}>
-          <Text style={styles.timeText}>
-            {formatTime(currentPosition)}
-          </Text>
-          <Slider
-            style={styles.progressBar}
-            value={currentPosition}
-            maximumValue={duration}
-            minimumValue={0}
-            onSlidingComplete={handleSeek}
-            minimumTrackTintColor={theme.Colors.primary}
-            maximumTrackTintColor={theme.Colors.textMuted}
-            thumbTintColor={theme.Colors.primary}
-          />
-          <Text style={styles.timeText}>
-            {formatTime(duration)}
-          </Text>
-        </View>
-      </View>
-
-      {/* Right Section - Controls */}
       <View style={styles.rightSection}>
-        <TouchableOpacity style={styles.controlButton}>
-          <Ionicons name="play-skip-back" size={theme.Typography.size.large} color={theme.Colors.textPrimary} />
-        </TouchableOpacity>
-        
         <TouchableOpacity onPress={handlePlayPause} style={styles.playPauseButton}>
           <Ionicons 
             name={isPlaying ? "pause" : "play"} 
             size={theme.Typography.size.h3} 
-            color={theme.Colors.textPrimary} 
+            color={theme.Colors.background} 
           />
         </TouchableOpacity>
         
@@ -119,77 +71,67 @@ export const NowPlayingBar: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    bottom: theme.Spacing.large + 20,
+    left: theme.Spacing.medium,
+    right: theme.Spacing.medium,
     backgroundColor: theme.Colors.card,
-    borderTopWidth: 1,
-    borderTopColor: theme.Colors.border,
-    padding: theme.Spacing.medium,
+    borderRadius: theme.Spacing.medium,
+    padding: theme.Spacing.small,
     flexDirection: 'row',
     alignItems: 'center',
-    height: 80,
+    height: 70,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   leftSection: {
-    flex: 3,
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: theme.Spacing.medium,
+  },
+  coverArtShadow: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
   },
   coverArtStyle: {
     width: 48,
     height: 48,
     borderRadius: theme.Spacing.xSmall,
     marginRight: theme.Spacing.small,
-    backgroundColor: theme.Colors.divider,
   },
   songInfo: {
     flex: 1,
+    justifyContent: 'center',
   },
   songTitle: {
-    fontSize: theme.Typography.size.small,
+    fontSize: theme.Typography.size.medium,
     fontWeight: theme.Typography.weight.bold,
     color: theme.Colors.textPrimary,
-    marginBottom: theme.Spacing.xSmall,
   },
   artist: {
-    fontSize: theme.Typography.size.xSmall,
+    fontSize: theme.Typography.size.small,
     color: theme.Colors.textSecondary,
   },
-  centerSection: {
-    flex: 4,
-    alignItems: 'center',
-  },
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-  },
-  progressBar: {
-    flex: 1,
-    marginHorizontal: theme.Spacing.small,
-    height: 4,
-  },
-  timeText: {
-    fontSize: theme.Typography.size.xSmall,
-    color: theme.Colors.textMuted,
-    minWidth: 35,
-  },
   rightSection: {
-    flex: 2,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
   },
   controlButton: {
     padding: theme.Spacing.small,
   },
   playPauseButton: {
     backgroundColor: theme.Colors.primary,
-    borderRadius: 25,
+    borderRadius: 30,
     width: 40,
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
+    marginHorizontal: theme.Spacing.medium,
   },
 });

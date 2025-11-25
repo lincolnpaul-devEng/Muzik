@@ -40,6 +40,7 @@ export interface StorageData {
   downloadedSongs: Song[];
   playlists: Playlist[];
   appSettings: AppSettings;
+  songs: Song[];
 }
 
 // Default settings
@@ -62,4 +63,5 @@ export const STORAGE_KEYS = {
   DOWNLOADED_SONGS: 'downloadedSongs',
   PLAYLISTS: 'playlists',
   APP_SETTINGS: 'appSettings',
+  SONGS: 'songs',
 } as const;

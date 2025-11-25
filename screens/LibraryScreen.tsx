@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, ProgressBarAndroid } from 'react-native';
-import { localMusicSyncService } from '../services/localMusicSync';
-import { theme } from '../constants/theme'; // Import theme
+import { localMusicSyncService } from '@/services/localMusicSync';
+import { theme } from '@/constants/theme'; // Import theme
 
 const LibraryScreen = () => {
   const [scanProgress, setScanProgress] = useState(0);
